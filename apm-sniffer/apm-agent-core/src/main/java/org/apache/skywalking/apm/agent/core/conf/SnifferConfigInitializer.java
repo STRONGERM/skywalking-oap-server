@@ -60,7 +60,8 @@ public class SnifferConfigInitializer {
      */
     public static void initializeCoreConfig(String agentOptions) {
         AGENT_SETTINGS = new Properties();
-        try (final InputStreamReader configFileStream = loadConfig()) {
+        try {
+            final InputStreamReader configFileStream = loadConfig();
             AGENT_SETTINGS.load(configFileStream);
             for (String key : AGENT_SETTINGS.stringPropertyNames()) {
                 String value = (String) AGENT_SETTINGS.get(key);
@@ -139,8 +140,8 @@ public class SnifferConfigInitializer {
     }
 
     private static List<List<String>> parseAgentOptions(String agentOptions) {
-        List<List<String>> options = new ArrayList<>();
-        List<String> terms = new ArrayList<>();
+        List<List<String>> options = new ArrayList();
+        List<String> terms = new ArrayList();
         boolean isInQuotes = false;
         StringBuilder currentTerm = new StringBuilder();
         for (char c : agentOptions.toCharArray()) {
@@ -154,7 +155,7 @@ public class SnifferConfigInitializer {
                 currentTerm = new StringBuilder();
 
                 options.add(terms);
-                terms = new ArrayList<>();
+                terms = new ArrayList();
             } else {
                 currentTerm.append(c);
             }

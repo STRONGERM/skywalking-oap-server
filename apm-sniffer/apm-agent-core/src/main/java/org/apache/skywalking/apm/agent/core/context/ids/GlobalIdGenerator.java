@@ -18,14 +18,19 @@
 
 package org.apache.skywalking.apm.agent.core.context.ids;
 
+import org.apache.skywalking.apm.util.StringUtil;
+
 import java.util.Random;
 import java.util.UUID;
-import org.apache.skywalking.apm.util.StringUtil;
 
 public final class GlobalIdGenerator {
     private static final String PROCESS_ID = UUID.randomUUID().toString().replaceAll("-", "");
-    private static final ThreadLocal<IDContext> THREAD_ID_SEQUENCE = ThreadLocal.withInitial(
-        () -> new IDContext(System.currentTimeMillis(), (short) 0));
+
+    private static final ThreadLocal<IDContext> THREAD_ID_SEQUENCE = new ThreadLocal();
+
+    static {
+        THREAD_ID_SEQUENCE.set(new IDContext(System.currentTimeMillis(), (short) 0));
+    }
 
     private GlobalIdGenerator() {
     }

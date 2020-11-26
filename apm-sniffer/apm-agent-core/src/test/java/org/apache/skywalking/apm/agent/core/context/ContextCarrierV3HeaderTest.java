@@ -49,7 +49,7 @@ public class ContextCarrierV3HeaderTest {
 
     @Test
     public void testSerializeV3Header() {
-        List<DistributedTraceId> distributedTraceIds = new ArrayList<>();
+        List<DistributedTraceId> distributedTraceIds = new ArrayList();
 
         ContextCarrier contextCarrier = new ContextCarrier();
         contextCarrier.setTraceSegmentId("1.2.3");
@@ -103,7 +103,7 @@ public class ContextCarrierV3HeaderTest {
 
     @Test
     public void testV2HeaderAccurate() {
-        List<DistributedTraceId> distributedTraceIds = new ArrayList<>();
+        List<DistributedTraceId> distributedTraceIds = new ArrayList();
         distributedTraceIds.add(new PropagatedTraceId("3.4.5"));
 
         ContextCarrier contextCarrier = new ContextCarrier();

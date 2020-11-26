@@ -121,7 +121,12 @@ public class SkyWalkingAgent {
         }
 
         Runtime.getRuntime()
-               .addShutdownHook(new Thread(ServiceManager.INSTANCE::shutdown, "skywalking service shutdown thread"));
+               .addShutdownHook(new Thread(new Runnable() {
+                   @Override
+                   public void run() {
+                       ServiceManager.INSTANCE.shutdown();
+                   }
+               }, "skywalking service shutdown thread"));
     }
 
     private static class Transformer implements AgentBuilder.Transformer {

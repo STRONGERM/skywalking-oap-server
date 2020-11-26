@@ -74,7 +74,7 @@ public class TraceSegment {
      */
     public TraceSegment() {
         this.traceSegmentId = GlobalIdGenerator.generate();
-        this.spans = new LinkedList<>();
+        this.spans = new LinkedList();
         this.relatedGlobalTraces = new DistributedTraceIds();
         this.relatedGlobalTraces.append(new NewDistributedTraceId());
         this.createTime = System.currentTimeMillis();
@@ -87,7 +87,7 @@ public class TraceSegment {
      */
     public void ref(TraceSegmentRef refSegment) {
         if (refs == null) {
-            refs = new LinkedList<>();
+            refs = new LinkedList();
         }
         if (!refs.contains(refSegment)) {
             refs.add(refSegment);

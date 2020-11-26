@@ -18,11 +18,10 @@
 
 package org.apache.skywalking.apm.plugin.spring.mvc.commons;
 
+import org.apache.skywalking.apm.agent.core.context.jdk8.Optional;
+import org.apache.skywalking.apm.agent.core.util.jdk8.Function;
+
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Tools for parsing path from annotation
@@ -31,19 +30,19 @@ public class ParsePathUtil {
 
     public static String recursiveParseMethodAnnotaion(Method method, Function<Method, String> parseFunc) {
         String result = parseFunc.apply(method);
-        if (Objects.isNull(result)) {
+        if (result == null) {
             Class<?> declaringClass = method.getDeclaringClass();
-            result = recursiveMatches(declaringClass, method.getName(), method.getParameters(), parseFunc);
+//            result = recursiveMatches(declaringClass, method.getName(), method.getParameters(), parseFunc);
         }
         return Optional.ofNullable(result).orElse("");
     }
 
-    private static String recursiveMatches(Class claz, String methodName, Parameter[] parameters,
+   /* private static String recursiveMatches(Class claz, String methodName, Parameter[] parameters,
         Function<Method, String> parseFunc) {
         Class<?>[] interfaces = claz.getInterfaces();
         for (Class<?> implInterface : interfaces) {
             String path = recursiveMatches(implInterface, methodName, parameters, parseFunc);
-            if (Objects.nonNull(path)) {
+            if (path != null) {
                 return path;
             }
             Method[] declaredMethods = implInterface.getDeclaredMethods();
@@ -54,9 +53,9 @@ public class ParsePathUtil {
             }
         }
         return null;
-    }
+    }*/
 
-    private static boolean parameterEquals(Parameter[] p1, Parameter[] p2) {
+    /*private static boolean parameterEquals(Parameter[] p1, Parameter[] p2) {
         if (p1.length != p1.length) {
             return false;
         }
@@ -66,5 +65,5 @@ public class ParsePathUtil {
             }
         }
         return true;
-    }
+    }*/
 }

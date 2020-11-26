@@ -42,7 +42,7 @@ import org.apache.zookeeper.proto.SyncRequest;
 
 class ZooOpt {
 
-    private static final Map<Integer, String> OPTS = new HashMap<>();
+    private static final Map<Integer, String> OPTS = new HashMap();
     private static final AbstractTag<String> PATH = Tags.ofKey("path");
     private static final AbstractTag<String> VERSION = Tags.ofKey("version");
     private static final AbstractTag<String> WATCH = Tags.ofKey("watch");

@@ -48,7 +48,7 @@ public class ProfileTaskExecutionContext {
 
     public ProfileTaskExecutionContext(ProfileTask task) {
         this.task = task;
-        profilingSegmentSlots = new AtomicReferenceArray<>(Config.Profile.MAX_PARALLEL);
+        profilingSegmentSlots = new AtomicReferenceArray(Config.Profile.MAX_PARALLEL);
     }
 
     /**

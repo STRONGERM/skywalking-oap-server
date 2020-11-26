@@ -41,7 +41,7 @@ public class HistogramTransformer extends MeterTransformer<HistogramAdapter> {
         final MeterData.Builder builder = MeterData.newBuilder();
 
         // get all values
-        List<MeterBucketValue> values = new ArrayList<>(this.buckets.length);
+        List<MeterBucketValue> values = new ArrayList(this.buckets.length);
         final long[] bucketValues = adapter.getBucketValues();
         for (int i = 0; i < bucketValues.length; i++) {
             values.add(buckets[i].transform(bucketValues[i]));

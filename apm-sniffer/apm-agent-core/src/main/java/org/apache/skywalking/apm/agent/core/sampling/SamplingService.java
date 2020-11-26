@@ -66,8 +66,17 @@ public class SamplingService implements BootService {
             this.resetSamplingFactor();
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(
                 new DefaultNamedThreadFactory("SamplingService"));
-            scheduledFuture = service.scheduleAtFixedRate(new RunnableWithExceptionProtection(
-                this::resetSamplingFactor, t -> logger.error("unexpected exception.", t)), 0, 3, TimeUnit.SECONDS);
+            scheduledFuture = service.scheduleAtFixedRate(new RunnableWithExceptionProtection(new Runnable() {
+                @Override
+                public void run() {
+                    resetSamplingFactor();
+                }
+            }, new RunnableWithExceptionProtection.CallbackWhenException() {
+                @Override
+                public void handle(Throwable t) {
+                    logger.error("unexpected exception.", t);
+                }
+            }), 0, 3, TimeUnit.SECONDS);
             logger.debug(
                 "Agent sampling mechanism started. Sample {} traces in 3 seconds.", Config.Agent.SAMPLE_N_PER_3_SECS);
         }

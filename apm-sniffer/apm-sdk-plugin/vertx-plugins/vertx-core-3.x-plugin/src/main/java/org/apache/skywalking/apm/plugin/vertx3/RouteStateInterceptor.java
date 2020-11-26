@@ -19,6 +19,7 @@
 package org.apache.skywalking.apm.plugin.vertx3;
 
 import io.vertx.core.Handler;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.impl.RoutingContextImplBase;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class RouteStateInterceptor implements InstanceMethodsAroundInterceptor,
         InstanceConstructorInterceptor {
@@ -80,10 +80,13 @@ public class RouteStateInterceptor implements InstanceMethodsAroundInterceptor,
         String routeMethods = null;
         if (VertxContext.VERTX_VERSION >= 37.1) {
             if (routingContext.currentRoute().methods() != null) {
+                StringBuilder sb = new StringBuilder();
+                for (HttpMethod httpMethod : routingContext.currentRoute().methods()) {
+                    sb.append(httpMethod.toString()).append(",");
+                }
+                String methods = sb.toString().substring(0, sb.toString().length() - 1);
                 routeMethods = "{" +
-                        routingContext.currentRoute().methods()
-                                .stream().map(Enum::toString)
-                                .collect(Collectors.joining(","))
+                        methods
                         + "}";
             }
         } else {

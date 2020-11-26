@@ -65,7 +65,7 @@ public class ProfileTaskChannelService implements BootService, Runnable, GRPCCha
 
 
     // segment snapshot sender
-    private final BlockingQueue<TracingThreadSnapshot> snapshotQueue = new LinkedBlockingQueue<>(
+    private final BlockingQueue<TracingThreadSnapshot> snapshotQueue = new LinkedBlockingQueue(
         Config.Profile.SNAPSHOT_TRANSPORT_BUFFER_SIZE);
     private volatile ScheduledFuture<?> sendSnapshotFuture;
 
@@ -126,24 +126,36 @@ public class ProfileTaskChannelService implements BootService, Runnable, GRPCCha
             getTaskListFuture = Executors.newSingleThreadScheduledExecutor(
                 new DefaultNamedThreadFactory("ProfileGetTaskService")
             ).scheduleWithFixedDelay(
-                new RunnableWithExceptionProtection(
-                    this,
-                    t -> logger.error("Query profile task list failure.", t)
-                ), 0, Config.Collector.GET_PROFILE_TASK_INTERVAL, TimeUnit.SECONDS
+                    new RunnableWithExceptionProtection(
+                            this, new RunnableWithExceptionProtection.CallbackWhenException() {
+                        @Override
+                        public void handle(Throwable t) {
+                            logger.error("Query profile task list failure.", t);
+                        }
+                    }), 0, Config.Collector.GET_PROFILE_TASK_INTERVAL, TimeUnit.SECONDS
             );
 
             sendSnapshotFuture = Executors.newSingleThreadScheduledExecutor(
                 new DefaultNamedThreadFactory("ProfileSendSnapshotService")
             ).scheduleWithFixedDelay(
                 new RunnableWithExceptionProtection(
-                    () -> {
-                        List<TracingThreadSnapshot> buffer = new ArrayList<>(Config.Profile.SNAPSHOT_TRANSPORT_BUFFER_SIZE);
-                        snapshotQueue.drainTo(buffer);
-                        if (!buffer.isEmpty()) {
-                            sender.send(buffer);
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                List<TracingThreadSnapshot> buffer = new ArrayList(Config.Profile.SNAPSHOT_TRANSPORT_BUFFER_SIZE);
+                                snapshotQueue.drainTo(buffer);
+                                if (!buffer.isEmpty()) {
+                                    sender.send(buffer);
+                                }
+                            }
+                        },
+                        new RunnableWithExceptionProtection.CallbackWhenException() {
+
+                            @Override
+                            public void handle(Throwable t) {
+                                logger.error("Profile segment snapshot upload failure.", t);
+                            }
                         }
-                    },
-                    t -> logger.error("Profile segment snapshot upload failure.", t)
                 ), 0, 500, TimeUnit.MILLISECONDS
             );
         }

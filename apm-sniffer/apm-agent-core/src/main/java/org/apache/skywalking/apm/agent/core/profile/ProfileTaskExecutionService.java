@@ -53,19 +53,19 @@ public class ProfileTaskExecutionService implements BootService, TracingThreadLi
     private volatile long lastCommandCreateTime = -1;
 
     // current processing profile task context
-    private final AtomicReference<ProfileTaskExecutionContext> taskExecutionContext = new AtomicReference<>();
+    private final AtomicReference<ProfileTaskExecutionContext> taskExecutionContext = new AtomicReference();
 
     // profile executor thread pool, only running one thread
     private final static ExecutorService PROFILE_EXECUTOR = Executors.newSingleThreadExecutor(
         new DefaultNamedThreadFactory("PROFILING-TASK"));
 
     // profile task list, include running and waiting running tasks
-    private final List<ProfileTask> profileTaskList = Collections.synchronizedList(new LinkedList<>());
+    private final List<ProfileTask> profileTaskList = Collections.synchronizedList(new LinkedList());
 
     /**
      * add profile task from OAP
      */
-    public void addProfileTask(ProfileTask task) {
+    public void addProfileTask(final ProfileTask task) {
         // update last command create time
         if (task.getCreateTime() > lastCommandCreateTime) {
             lastCommandCreateTime = task.getCreateTime();
@@ -84,7 +84,12 @@ public class ProfileTaskExecutionService implements BootService, TracingThreadLi
 
         // schedule to start task
         long timeToProcessMills = task.getStartTime() - System.currentTimeMillis();
-        PROFILE_TASK_SCHEDULE.schedule(() -> processProfileTask(task), timeToProcessMills, TimeUnit.MILLISECONDS);
+        PROFILE_TASK_SCHEDULE.schedule(new Runnable() {
+            @Override
+            public void run() {
+                processProfileTask(task);
+            }
+        }, timeToProcessMills, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -129,8 +134,13 @@ public class ProfileTaskExecutionService implements BootService, TracingThreadLi
         // start profiling this task
         currentStartedTaskContext.startProfiling(PROFILE_EXECUTOR);
 
-        PROFILE_TASK_SCHEDULE.schedule(
-            () -> stopCurrentProfileTask(currentStartedTaskContext), task.getDuration(), TimeUnit.MINUTES);
+        PROFILE_TASK_SCHEDULE.schedule(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               stopCurrentProfileTask(currentStartedTaskContext);
+                                           }
+                                       }
+                , task.getDuration(), TimeUnit.MINUTES);
     }
 
     /**

@@ -69,7 +69,7 @@ public class ServiceManagementClient implements BootService, Runnable, GRPCChann
     public void prepare() {
         ServiceManager.INSTANCE.findService(GRPCChannelManager.class).addChannelListener(this);
 
-        SERVICE_INSTANCE_PROPERTIES = new ArrayList<>();
+        SERVICE_INSTANCE_PROPERTIES = new ArrayList();
 
         for (String key : Config.Agent.INSTANCE_PROPERTIES.keySet()) {
             SERVICE_INSTANCE_PROPERTIES.add(KeyStringValuePair.newBuilder()
@@ -86,13 +86,17 @@ public class ServiceManagementClient implements BootService, Runnable, GRPCChann
     @Override
     public void boot() {
         heartbeatFuture = Executors.newSingleThreadScheduledExecutor(
-            new DefaultNamedThreadFactory("ServiceManagementClient")
+                new DefaultNamedThreadFactory("ServiceManagementClient")
         ).scheduleAtFixedRate(
-            new RunnableWithExceptionProtection(
-                this,
-                t -> logger.error("unexpected exception.", t)
-            ), 0, Config.Collector.HEARTBEAT_PERIOD,
-            TimeUnit.SECONDS
+                new RunnableWithExceptionProtection(
+                        this, new RunnableWithExceptionProtection.CallbackWhenException() {
+
+                    @Override
+                    public void handle(Throwable t) {
+                        logger.error("unexpected exception.", t);
+                    }
+                }), 0, Config.Collector.HEARTBEAT_PERIOD,
+                TimeUnit.SECONDS
         );
     }
 

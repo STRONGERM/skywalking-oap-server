@@ -110,7 +110,7 @@ public class ThreadProfiler {
         int dumpElementCount = Math.min(stackTrace.length, Config.Profile.DUMP_MAX_STACK_DEPTH);
 
         // use inverted order, because thread dump is start with bottom
-        final ArrayList<String> stackList = new ArrayList<>(dumpElementCount);
+        final ArrayList<String> stackList = new ArrayList(dumpElementCount);
         for (int i = dumpElementCount - 1; i >= 0; i--) {
             stackList.add(buildStackElementCodeSignature(stackTrace[i]));
         }

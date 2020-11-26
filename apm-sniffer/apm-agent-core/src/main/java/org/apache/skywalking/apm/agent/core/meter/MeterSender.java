@@ -22,9 +22,6 @@ import io.grpc.Channel;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import org.apache.skywalking.apm.agent.core.boot.BootService;
 import org.apache.skywalking.apm.agent.core.boot.DefaultImplementor;
 import org.apache.skywalking.apm.agent.core.boot.ServiceManager;
@@ -36,9 +33,13 @@ import org.apache.skywalking.apm.agent.core.remote.GRPCChannelListener;
 import org.apache.skywalking.apm.agent.core.remote.GRPCChannelManager;
 import org.apache.skywalking.apm.agent.core.remote.GRPCChannelStatus;
 import org.apache.skywalking.apm.agent.core.remote.GRPCStreamServiceStatus;
+import org.apache.skywalking.apm.agent.core.util.jdk8.Consumer;
 import org.apache.skywalking.apm.network.common.v3.Commands;
 import org.apache.skywalking.apm.network.language.agent.v3.MeterData;
 import org.apache.skywalking.apm.network.language.agent.v3.MeterReportServiceGrpc;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.apache.skywalking.apm.agent.core.conf.Config.Collector.GRPC_UPSTREAM_TIMEOUT;
 
@@ -88,7 +89,12 @@ public class MeterSender implements BootService, GRPCChannelListener {
                 });
 
                 final StreamObserver<MeterData> reporter = reportStreamObserver;
-                transform(meterMap, meterData -> reporter.onNext(meterData));
+                transform(meterMap, new Consumer<MeterData>() {
+                    @Override
+                    public void accept(MeterData meterData) {
+                        reporter.onNext(meterData);
+                    }
+                });
             } catch (Throwable e) {
                 if (!(e instanceof StatusRuntimeException)) {
                     logger.error(e, "Report meters to backend fail.");

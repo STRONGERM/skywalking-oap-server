@@ -35,7 +35,7 @@ public class KafkaLoggingPluginConfig {
 
             public static String TOPIC_NAME = "operation-jszt-003";
 
-            public static Map<String, String> PRODUCER_CONFIG = new HashMap<>();
+            public static Map<String, String> PRODUCER_CONFIG = new HashMap();
         }
     }
 }

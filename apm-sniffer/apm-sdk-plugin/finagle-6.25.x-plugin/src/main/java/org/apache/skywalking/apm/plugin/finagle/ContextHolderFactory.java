@@ -107,7 +107,7 @@ class ContextHolderFactory {
             this.snapshots = new ThreadLocal<LinkedList<Snapshot<S>>>() {
                 @Override
                 protected LinkedList<Snapshot<S>> initialValue() {
-                    return new LinkedList<>();
+                    return new LinkedList();
                 }
             };
         }
@@ -115,7 +115,7 @@ class ContextHolderFactory {
         @Override
         void let(Object key, Object value) {
             S currentContext = getCurrentContext();
-            snapshots.get().push(new Snapshot<>(key, currentContext));
+            snapshots.get().push(new Snapshot(key, currentContext));
             local.update(getUpdatedContext(currentContext, key, value));
         }
 

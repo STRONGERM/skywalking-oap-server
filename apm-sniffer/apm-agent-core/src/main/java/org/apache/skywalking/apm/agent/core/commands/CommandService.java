@@ -43,7 +43,7 @@ public class CommandService implements BootService, Runnable {
     private ExecutorService executorService = Executors.newSingleThreadExecutor(
         new DefaultNamedThreadFactory("CommandService")
     );
-    private LinkedBlockingQueue<BaseCommand> commands = new LinkedBlockingQueue<>(64);
+    private LinkedBlockingQueue<BaseCommand> commands = new LinkedBlockingQueue(64);
     private CommandSerialNumberCache serialNumberCache = new CommandSerialNumberCache();
 
     @Override
@@ -53,7 +53,12 @@ public class CommandService implements BootService, Runnable {
     @Override
     public void boot() throws Throwable {
         executorService.submit(
-            new RunnableWithExceptionProtection(this, t -> LOGGER.error(t, "CommandService failed to execute commands"))
+                new RunnableWithExceptionProtection(this, new RunnableWithExceptionProtection.CallbackWhenException() {
+                    @Override
+                    public void handle(Throwable t) {
+                        LOGGER.error(t, "CommandService failed to execute commands");
+                    }
+                })
         );
     }
 
@@ -93,7 +98,7 @@ public class CommandService implements BootService, Runnable {
     @Override
     public void shutdown() throws Throwable {
         isRunning = false;
-        commands.drainTo(new ArrayList<>());
+        commands.drainTo(new ArrayList());
         executorService.shutdown();
     }
 

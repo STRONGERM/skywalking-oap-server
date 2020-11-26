@@ -26,6 +26,8 @@ import io.grpc.ClientInterceptors;
 import io.grpc.ForwardingClientCall;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
@@ -48,7 +50,9 @@ public class AgentIDDecorator implements ChannelDecorator {
             Enumeration<URL> resources = AgentIDDecorator.class.getClassLoader().getResources(JarFile.MANIFEST_NAME);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                try (InputStream is = url.openStream()) {
+                InputStream is = null;
+                try {
+                    is = url.openStream();
                     if (is != null) {
                         Manifest manifest = new Manifest(is);
                         Attributes mainAttribs = manifest.getMainAttributes();
@@ -59,6 +63,8 @@ public class AgentIDDecorator implements ChannelDecorator {
                             }
                         }
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {

@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractTracingSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
 import org.apache.skywalking.apm.agent.core.context.trace.TraceSegment;
@@ -92,8 +93,11 @@ public class KafkaProducerInterceptorTest {
     public void setUp() {
         producerInterceptor = new KafkaProducerInterceptor();
         //when use lambda expression not to generate inner class,and not to trigger class define.
-        Callback callback = (metadata, exception) -> {
-            if (null != metadata) {
+        Callback callback = new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                if (null != metadata) {
+                }
             }
         };
         arguments = new Object[]{

@@ -22,9 +22,12 @@ import org.apache.skywalking.apm.agent.core.meter.MeterId;
 import org.apache.skywalking.apm.agent.core.meter.MeterTag;
 import org.apache.skywalking.apm.agent.core.meter.MeterType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class MeterIdConverter {
 
@@ -36,7 +39,27 @@ public class MeterIdConverter {
         MeterType type = convertType(id);
         List<MeterTag> tags = Collections.emptyList();
         if (id.getTags() != null) {
-            tags = id.getTags().stream().map(t -> new MeterTag(t.getName(), t.getValue())).collect(Collectors.toList());
+            tags = id.getTags().stream().map(new Function<org.apache.skywalking.apm.toolkit.meter.MeterId.Tag, MeterTag>() {
+                @Override
+                public MeterTag apply(org.apache.skywalking.apm.toolkit.meter.MeterId.Tag t) {
+                    return new MeterTag(t.getName(), t.getValue());
+                }
+            }).collect(new Supplier<List<MeterTag>>() {
+                @Override
+                public List<MeterTag> get() {
+                    return new ArrayList();
+                }
+            }, new BiConsumer<List<MeterTag>, MeterTag>() {
+                @Override
+                public void accept(List<MeterTag> meterTags, MeterTag meterTag) {
+                    meterTags.add(meterTag);
+                }
+            }, new BiConsumer<List<MeterTag>, List<MeterTag>>() {
+                @Override
+                public void accept(List<MeterTag> meterTags, List<MeterTag> meterTags2) {
+                    meterTags.addAll(meterTags2);
+                }
+            });
         }
 
         return new MeterId(meterName, type, tags);

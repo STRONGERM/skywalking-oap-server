@@ -116,7 +116,7 @@ public class IgnoredTracerContext implements AbstractTracerContext {
     }
 
     public static class ListenerManager {
-        private static List<IgnoreTracerContextListener> LISTENERS = new LinkedList<>();
+        private static List<IgnoreTracerContextListener> LISTENERS = new LinkedList();
 
         /**
          * Add the given {@link IgnoreTracerContextListener} to {@link #LISTENERS} list.

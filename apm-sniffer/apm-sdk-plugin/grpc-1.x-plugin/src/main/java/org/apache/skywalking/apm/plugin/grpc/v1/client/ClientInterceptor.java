@@ -28,6 +28,6 @@ public class ClientInterceptor implements io.grpc.ClientInterceptor {
     @Override
     public <REQUEST, RESPONSE> ClientCall<REQUEST, RESPONSE> interceptCall(MethodDescriptor<REQUEST, RESPONSE> method,
         CallOptions callOptions, Channel channel) {
-        return new TracingClientCall<>(channel.newCall(method, callOptions), method, channel);
+        return new TracingClientCall(channel.newCall(method, callOptions), method, channel);
     }
 }

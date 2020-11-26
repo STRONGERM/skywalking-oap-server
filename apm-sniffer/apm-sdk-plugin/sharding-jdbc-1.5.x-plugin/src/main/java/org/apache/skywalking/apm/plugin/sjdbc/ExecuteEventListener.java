@@ -25,6 +25,8 @@ import com.dangdang.ddframe.rdb.sharding.executor.threadlocal.ExecutorDataMap;
 import com.dangdang.ddframe.rdb.sharding.util.EventBusInstance;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
+
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
@@ -70,7 +72,12 @@ public class ExecuteEventListener {
                 if (!event.getParameters().isEmpty()) {
                     String variables = event.getParameters()
                         .stream()
-                        .map(String::valueOf)
+                        .map(new Function<Object, String>() {
+                            @Override
+                            public String apply(Object o) {
+                                return String.valueOf(o);
+                            }
+                        })
                         .collect(Collectors.joining(","));
                     Tags.DB_BIND_VARIABLES.set(span, variables);
                 }

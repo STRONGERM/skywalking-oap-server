@@ -45,7 +45,7 @@ public class LogDataEntity {
         protected List<KeyValuePair> logs;
 
         public Builder() {
-            logs = new LinkedList<>();
+            logs = new LinkedList();
         }
 
         public Builder add(KeyValuePair... fields) {

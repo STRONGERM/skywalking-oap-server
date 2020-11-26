@@ -77,17 +77,20 @@ public class TracingFilter extends Filter {
             span.setComponent(ComponentsDefine.PLAY);
             SpanLayer.asHttp(span);
             span.prepareForAsync();
-            CompletionStage<Result> stage = next.apply(request).thenApply(result -> {
-                if (result.status() >= 400) {
-                    span.errorOccurred();
-                    Tags.STATUS_CODE.set(span, Integer.toString(result.status()));
+            CompletionStage<Result> stage = next.apply(request).thenApply(new Function<Result, Result>() {
+                @Override
+                public Result apply(Result result) {
+                    if (result.status() >= 400) {
+                        span.errorOccurred();
+                        Tags.STATUS_CODE.set(span, Integer.toString(result.status()));
+                    }
+                    try {
+                        span.asyncFinish();
+                    } catch (Throwable t) {
+                        ContextManager.activeSpan().errorOccurred().log(t);
+                    }
+                    return result;
                 }
-                try {
-                    span.asyncFinish();
-                } catch (Throwable t) {
-                    ContextManager.activeSpan().errorOccurred().log(t);
-                }
-                return result;
             });
             ContextManager.stopSpan(span);
             return stage;

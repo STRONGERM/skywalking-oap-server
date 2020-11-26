@@ -61,7 +61,7 @@ public class KafkaProfileSnapshotSender extends ProfileSnapshotSender {
                 );
             }
 
-            producer.send(new ProducerRecord<>(
+            producer.send(new ProducerRecord(
                 topic,
                 object.getTaskId() + object.getSequence(),
                 Bytes.wrap(object.toByteArray())

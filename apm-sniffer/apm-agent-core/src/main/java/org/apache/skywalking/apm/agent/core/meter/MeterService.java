@@ -37,7 +37,7 @@ public class MeterService implements BootService, Runnable {
     private static final ILog logger = LogManager.getLogger(MeterService.class);
 
     // all meters
-    private final ConcurrentHashMap<MeterId, MeterTransformer> meterMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<MeterId, MeterTransformer> meterMap = new ConcurrentHashMap();
 
     // report meters
     private volatile ScheduledFuture<?> reportMeterFuture;
@@ -71,9 +71,13 @@ public class MeterService implements BootService, Runnable {
             reportMeterFuture = Executors.newSingleThreadScheduledExecutor(
                 new DefaultNamedThreadFactory("MeterReportService")
             ).scheduleWithFixedDelay(new RunnableWithExceptionProtection(
-                this,
-                t -> logger.error("Report meters failure.", t)
-            ), 0, Config.Meter.REPORT_INTERVAL, TimeUnit.SECONDS);
+                    this, new RunnableWithExceptionProtection.CallbackWhenException() {
+
+                @Override
+                public void handle(Throwable t) {
+                    logger.error("Report meters failure.", t);
+                }
+            }), 0, Config.Meter.REPORT_INTERVAL, TimeUnit.SECONDS);
         }
     }
 

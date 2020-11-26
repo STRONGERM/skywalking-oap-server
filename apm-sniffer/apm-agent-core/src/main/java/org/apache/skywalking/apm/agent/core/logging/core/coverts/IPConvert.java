@@ -65,7 +65,9 @@ public class IPConvert implements Converter {
                 InetAddress localHost = InetAddress.getLocalHost();
                 IP_AND_ADDRESS = normalizeHostAddress(localHost);
             }
-        } catch (SocketException | UnknownHostException ex) {
+        } catch (UnknownHostException ex) {
+            ex.printStackTrace();
+        } catch (SocketException ex) {
             ex.printStackTrace();
         }
     }

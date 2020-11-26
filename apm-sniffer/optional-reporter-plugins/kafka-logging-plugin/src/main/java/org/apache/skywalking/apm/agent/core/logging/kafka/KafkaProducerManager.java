@@ -20,8 +20,10 @@ package org.apache.skywalking.apm.agent.core.logging.kafka;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.serialization.BytesSerializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.skywalking.apm.agent.core.boot.BootService;
@@ -30,11 +32,11 @@ import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 /**
  * Configuring, initializing and holding a KafkaProducer instance for reporters.
@@ -48,32 +50,35 @@ public class KafkaProducerManager implements BootService, Runnable {
 
     @Override
     public void prepare() throws Throwable {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(
             ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaLoggingPluginConfig.Plugin.KafkaLogger.BOOTSTRAP_SERVERS);
-        KafkaLoggingPluginConfig.Plugin.KafkaLogger.PRODUCER_CONFIG.forEach((k, v) -> properties.setProperty(k, v));
+        for (Map.Entry<String, String> entry : KafkaLoggingPluginConfig.Plugin.KafkaLogger.PRODUCER_CONFIG.entrySet()) {
+            properties.setProperty(entry.getKey(), entry.getValue());
+        }
 
         AdminClient adminClient = AdminClient.create(properties);
         DescribeTopicsResult topicsResult = adminClient.describeTopics(Arrays.asList(
                 KafkaLoggingPluginConfig.Plugin.KafkaLogger.TOPIC_NAME
         ));
-        Set<String> topics = topicsResult.values().entrySet().stream()
-                                         .map(entry -> {
-                                             try {
-                                                 entry.getValue().get();
-                                                 return null;
-                                             } catch (InterruptedException | ExecutionException e) {
-                                                 logger.error("Describe topics failure.", e);
-                                             }
-                                             return entry.getKey();
-                                         })
-                                         .filter(Objects::nonNull)
-                                         .collect(Collectors.toSet());
+        Set<String> topics = new HashSet();
+        for (Map.Entry<String, KafkaFuture<TopicDescription>> entry : topicsResult.values().entrySet()) {
+            try {
+                entry.getValue().get();
+                continue;
+            } catch (ExecutionException e) {
+                logger.error("Describe topics failure.", e);
+            } catch (InterruptedException e) {
+                logger.error("Describe topics failure.", e);
+            }
+            topics.add(entry.getKey());
+        }
+
         if (!topics.isEmpty()) {
             logger.warn("These topics" + topics + " don't exist.");
         }
 
-        producer = new KafkaProducer<>(properties, new BytesSerializer(), new BytesSerializer());
+        producer = new KafkaProducer(properties, new BytesSerializer(), new BytesSerializer());
     }
 
     @Override

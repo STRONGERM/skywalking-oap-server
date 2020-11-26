@@ -95,6 +95,6 @@ public class MethodInheritanceAnnotationMatcher<T extends MethodDescription> ext
 
     public static <T extends AnnotationSource> ElementMatcher.Junction<T> byMethodInheritanceAnnotationMatcher(
         ElementMatcher<? super TypeDescription> matcher) {
-        return new MethodInheritanceAnnotationMatcher(new CollectionItemMatcher<>(annotationType(matcher)));
+        return new MethodInheritanceAnnotationMatcher(new CollectionItemMatcher(annotationType(matcher)));
     }
 }

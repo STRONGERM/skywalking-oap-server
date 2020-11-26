@@ -56,8 +56,8 @@ public enum ServiceManager {
     }
 
     private Map<Class, BootService> loadAllServices() {
-        Map<Class, BootService> bootedServices = new LinkedHashMap<>();
-        List<BootService> allServices = new LinkedList<>();
+        Map<Class, BootService> bootedServices = new LinkedHashMap();
+        List<BootService> allServices = new LinkedList();
         load(allServices);
         for (final BootService bootService : allServices) {
             Class<? extends BootService> bootServiceClass = bootService.getClass();

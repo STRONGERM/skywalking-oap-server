@@ -115,7 +115,7 @@ public class MeterServiceTest {
 
         Whitebox.setInternalState(registryService, "sender", sender);
 
-        upstreamMeters = new ArrayList<>();
+        upstreamMeters = new ArrayList();
     }
 
     @Test
@@ -220,7 +220,7 @@ public class MeterServiceTest {
         for (int i = 0; i < values.length; i += 2) {
             final MeterBucketValue bucketValue = histogram.getValues(i);
             Assert.assertNotNull(bucketValue);
-            Assert.assertEquals(bucketValue.getBucket(), (double) values[i], 0.0);
+            Assert.assertEquals(bucketValue.getBucket(), Double.parseDouble(String.valueOf(values[i])) , 0.0);
             Assert.assertEquals(bucketValue.getCount(), values[i + 1]);
         }
     }

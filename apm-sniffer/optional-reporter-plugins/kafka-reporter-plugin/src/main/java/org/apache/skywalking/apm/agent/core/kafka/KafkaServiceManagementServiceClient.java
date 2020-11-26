@@ -62,7 +62,7 @@ public class KafkaServiceManagementServiceClient implements BootService, Runnabl
     public void prepare() {
         topic = KafkaReporterPluginConfig.Plugin.Kafka.TOPIC_MANAGEMENT;
 
-        SERVICE_INSTANCE_PROPERTIES = new ArrayList<>();
+        SERVICE_INSTANCE_PROPERTIES = new ArrayList();
         for (String key : Config.Agent.INSTANCE_PROPERTIES.keySet()) {
             SERVICE_INSTANCE_PROPERTIES.add(KeyStringValuePair.newBuilder()
                                                               .setKey(key)
@@ -82,8 +82,13 @@ public class KafkaServiceManagementServiceClient implements BootService, Runnabl
         heartbeatFuture = Executors.newSingleThreadScheduledExecutor(
             new DefaultNamedThreadFactory("ServiceManagementClientKafkaProducer")
         ).scheduleAtFixedRate(new RunnableWithExceptionProtection(
-            this,
-            t -> logger.error("unexpected exception.", t)
+                this, new RunnableWithExceptionProtection.CallbackWhenException() {
+            @Override
+            public void handle(Throwable t) {
+                logger.error("unexpected exception.", t);
+            }
+        }
+
         ), 0, Config.Collector.HEARTBEAT_PERIOD, TimeUnit.SECONDS);
 
         InstanceProperties instance = InstanceProperties.newBuilder()
@@ -93,7 +98,7 @@ public class KafkaServiceManagementServiceClient implements BootService, Runnabl
                                                             Config.OsInfo.IPV4_LIST_SIZE))
                                                         .addAllProperties(SERVICE_INSTANCE_PROPERTIES)
                                                         .build();
-        producer.send(new ProducerRecord<>(topic, TOPIC_KEY_REGISTER + instance.getServiceInstance(), Bytes.wrap(instance.toByteArray())));
+        producer.send(new ProducerRecord(topic, TOPIC_KEY_REGISTER + instance.getServiceInstance(), Bytes.wrap(instance.toByteArray())));
         producer.flush();
     }
 
@@ -106,7 +111,7 @@ public class KafkaServiceManagementServiceClient implements BootService, Runnabl
         if (logger.isDebugEnable()) {
             logger.debug("Heartbeat reporting, instance: {}", ping.getServiceInstance());
         }
-        producer.send(new ProducerRecord<>(topic, ping.getServiceInstance(), Bytes.wrap(ping.toByteArray())));
+        producer.send(new ProducerRecord(topic, ping.getServiceInstance(), Bytes.wrap(ping.toByteArray())));
     }
 
     @Override

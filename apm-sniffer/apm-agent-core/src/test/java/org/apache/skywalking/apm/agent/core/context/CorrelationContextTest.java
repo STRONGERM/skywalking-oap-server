@@ -19,11 +19,10 @@
 package org.apache.skywalking.apm.agent.core.context;
 
 import org.apache.skywalking.apm.agent.core.conf.Config;
+import org.apache.skywalking.apm.agent.core.context.jdk8.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Optional;
 
 public class CorrelationContextTest {
 

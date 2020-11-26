@@ -74,7 +74,8 @@ public class CodecUtils {
         if (StringUtil.isNotEmpty(swContextCarrier.getOperationName())
                 && swContextCarrier.getCarrier() != null) {
             ByteArrayOutputStream bos = getBos();
-            try (DataOutputStream dos = new DataOutputStream(bos)) {
+            try {
+                DataOutputStream dos = new DataOutputStream(bos);
                 putString(dos, swContextCarrier.getOperationName());
                 CarrierItem next = swContextCarrier.getCarrier().items();
                 while (next.hasNext()) {
@@ -152,7 +153,7 @@ public class CodecUtils {
     }
 
     private static Map<String, String> readToMap(ByteBuffer byteBuffer) {
-        Map<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         String key = null;
         while ((key = getNextString(byteBuffer)) != null) {
             data.put(key, getNextString(byteBuffer));

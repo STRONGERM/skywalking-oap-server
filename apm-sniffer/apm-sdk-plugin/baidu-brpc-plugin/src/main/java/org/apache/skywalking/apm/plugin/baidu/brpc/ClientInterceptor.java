@@ -48,7 +48,7 @@ public class ClientInterceptor implements InstanceMethodsAroundInterceptor {
         while (next.hasNext()) {
             next = next.next();
             if (request.getKvAttachment() == null) {
-                request.setKvAttachment(new HashMap<>());
+                request.setKvAttachment(new HashMap());
             }
             request.getKvAttachment().put(next.getHeadKey(), next.getHeadValue());
         }

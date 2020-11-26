@@ -45,7 +45,7 @@ public class GRPCChannelManager implements BootService, Runnable {
     private volatile ScheduledFuture<?> connectCheckFuture;
     private volatile boolean reconnect = true;
     private final Random random = new Random();
-    private final List<GRPCChannelListener> listeners = Collections.synchronizedList(new LinkedList<>());
+    private final List<GRPCChannelListener> listeners = Collections.synchronizedList(new LinkedList());
     private volatile List<String> grpcServers;
     private volatile int selectedIdx = -1;
     private volatile int reconnectCount = 0;
@@ -64,12 +64,15 @@ public class GRPCChannelManager implements BootService, Runnable {
         }
         grpcServers = Arrays.asList(Config.Collector.BACKEND_SERVICE.split(","));
         connectCheckFuture = Executors.newSingleThreadScheduledExecutor(
-            new DefaultNamedThreadFactory("GRPCChannelManager")
+                new DefaultNamedThreadFactory("GRPCChannelManager")
         ).scheduleAtFixedRate(
-            new RunnableWithExceptionProtection(
-                this,
-                t -> logger.error("unexpected exception.", t)
-            ), 0, Config.Collector.GRPC_CHANNEL_CHECK_INTERVAL, TimeUnit.SECONDS
+                new RunnableWithExceptionProtection(
+                        this, new RunnableWithExceptionProtection.CallbackWhenException() {
+                    @Override
+                    public void handle(Throwable t) {
+                        logger.error("unexpected exception.", t);
+                    }
+                }), 0, Config.Collector.GRPC_CHANNEL_CHECK_INTERVAL, TimeUnit.SECONDS
         );
     }
 

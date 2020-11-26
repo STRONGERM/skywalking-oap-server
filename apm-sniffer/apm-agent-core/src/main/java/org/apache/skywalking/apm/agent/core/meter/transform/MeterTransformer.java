@@ -19,13 +19,13 @@
 package org.apache.skywalking.apm.agent.core.meter.transform;
 
 import org.apache.skywalking.apm.agent.core.meter.MeterId;
+import org.apache.skywalking.apm.agent.core.meter.MeterTag;
 import org.apache.skywalking.apm.agent.core.meter.adapter.MeterAdapter;
 import org.apache.skywalking.apm.network.language.agent.v3.Label;
 import org.apache.skywalking.apm.network.language.agent.v3.MeterData;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Meter transformer base data
@@ -66,10 +66,11 @@ public abstract class MeterTransformer<T extends MeterAdapter> {
         if (labels != null) {
             return labels;
         }
+        for (MeterTag t : getId().getTags()) {
+            labels.add(Label.newBuilder().setName(t.getKey()).setValue(t.getValue()).build());
+        }
 
-        return labels = getId().getTags().stream()
-            .map(t -> Label.newBuilder().setName(t.getKey()).setValue(t.getValue()).build())
-            .collect(Collectors.toList());
+        return labels ;
     }
 
     /**

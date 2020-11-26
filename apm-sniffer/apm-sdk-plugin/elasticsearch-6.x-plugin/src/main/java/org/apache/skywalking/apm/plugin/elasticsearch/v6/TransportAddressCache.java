@@ -22,7 +22,6 @@ import org.elasticsearch.common.transport.TransportAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TransportAddressCache {
 
@@ -48,11 +47,11 @@ public class TransportAddressCache {
     }
 
     private String format() {
-        return String.join(","
-                , transportAddresses.stream()
-                        .map(x -> String.format("%s:%s", x.getAddress(), x.getPort()))
-                        .collect(Collectors.toList())
-        );
+        StringBuilder sb = new StringBuilder();
+        for (TransportAddress x : transportAddresses) {
+            sb.append(String.format("%s:%s", x.getAddress(), x.getPort())).append(",");
+        }
+        return sb.toString().substring(0, sb.toString().length() - 1);
     }
 
     public String transportAddress() {

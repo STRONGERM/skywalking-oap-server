@@ -46,7 +46,7 @@ public class FileUtils {
         dir.delete();
     }
 
-    public static void deleteDirectoryOnExit(File dir) {
+    public static void deleteDirectoryOnExit(final File dir) {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

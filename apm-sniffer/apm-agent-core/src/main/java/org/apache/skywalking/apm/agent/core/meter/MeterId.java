@@ -22,7 +22,6 @@ import org.apache.skywalking.apm.network.language.agent.v3.Label;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Identity the meter, including name, type and tags.
@@ -61,10 +60,11 @@ public class MeterId {
         if (labels != null) {
             return labels;
         }
+        for (MeterTag t : tags) {
+            labels.add(Label.newBuilder().setName(t.getKey()).setValue(t.getValue()).build());
+        }
 
-        return labels = tags.stream()
-            .map(t -> Label.newBuilder().setName(t.getKey()).setValue(t.getValue()).build())
-            .collect(Collectors.toList());
+        return labels ;
     }
 
     @Override

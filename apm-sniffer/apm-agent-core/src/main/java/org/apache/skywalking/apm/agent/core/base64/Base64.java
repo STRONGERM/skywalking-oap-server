@@ -24,8 +24,8 @@ import java.nio.charset.StandardCharsets;
  * A wrapper of {@link java.util.Base64} with convenient conversion methods between {@code byte[]} and {@code String}
  */
 public final class Base64 {
-    private static final java.util.Base64.Decoder DECODER = java.util.Base64.getDecoder();
-    private static final java.util.Base64.Encoder ENCODER = java.util.Base64.getEncoder();
+    private static final org.apache.skywalking.apm.agent.core.util.jdk8.Base64.Decoder DECODER = org.apache.skywalking.apm.agent.core.util.jdk8.Base64.getDecoder();
+    private static final org.apache.skywalking.apm.agent.core.util.jdk8.Base64.Encoder ENCODER = org.apache.skywalking.apm.agent.core.util.jdk8.Base64.getEncoder();
 
     private Base64() {
     }

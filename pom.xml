@@ -585,7 +585,8 @@
                         org/apache/skywalking/oal/rt/grammar/*.java,
                         org/apache/skywalking/oap/server/exporter/grpc/*.java,
                         org/apache/skywalking/oap/server/configuration/service/*.java,
-                        org/apache/skywalking/apm/webapp/**/*.java
+                        org/apache/skywalking/apm/webapp/**/*.java,
+                        org/apache/skywalking/apm/agent/core/util/jdk8/*.java
                     </excludes>
                     <propertyExpansion>
                         import.control=apm-checkstyle/importControl.xml

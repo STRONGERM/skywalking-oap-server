@@ -20,7 +20,6 @@ package org.apache.skywalking.apm.agent.core.kafka;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -49,8 +48,8 @@ public class KafkaJVMMetricsSender extends JVMMetricsSender {
 
     @Override
     public void run() {
-        if (!queue.isEmpty() && Objects.nonNull(producer)) {
-            List<JVMMetric> buffer = new ArrayList<>();
+        if (!queue.isEmpty() && producer != null) {
+            List<JVMMetric> buffer = new ArrayList();
             queue.drainTo(buffer);
 
             if (running) {
@@ -67,7 +66,7 @@ public class KafkaJVMMetricsSender extends JVMMetricsSender {
                     );
                 }
 
-                producer.send(new ProducerRecord<>(
+                producer.send(new ProducerRecord(
                     topic,
                     metrics.getServiceInstance(),
                     Bytes.wrap(metrics.toByteArray())
@@ -79,7 +78,7 @@ public class KafkaJVMMetricsSender extends JVMMetricsSender {
 
     @Override
     public void prepare() {
-        queue = new LinkedBlockingQueue<>(Config.Jvm.BUFFER_SIZE);
+        queue = new LinkedBlockingQueue(Config.Jvm.BUFFER_SIZE);
         topic = KafkaReporterPluginConfig.Plugin.Kafka.TOPIC_METRICS;
     }
 

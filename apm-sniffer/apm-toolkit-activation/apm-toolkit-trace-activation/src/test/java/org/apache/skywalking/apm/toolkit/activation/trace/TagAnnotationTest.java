@@ -196,7 +196,7 @@ public class TagAnnotationTest {
         Method testMethodWithReturnMap = TestAnnotationMethodClass.class.getDeclaredMethod("testMethodWithReturnMap", String.class, Integer.class);
         methodInterceptor.beforeMethod(enhancedInstance, testMethodWithReturnMap, new Object[]{"wangwu", 18}, null, null);
 
-        Map<String, User> userMap = new HashMap<>();
+        Map<String, User> userMap = new HashMap();
         userMap.put("user", new User("wangwu", 18));
         methodInterceptor.afterMethod(enhancedInstance, testMethodWithReturnMap, null, null, userMap);
 
@@ -308,7 +308,7 @@ public class TagAnnotationTest {
 
         @Tags({@Tag(key = "username", value = "arg[0]"), @Tag(key = "info", value = "returnedObj.user.info")})
         public Map<String, User> testMethodWithReturnMap(String username, Integer age) {
-            Map<String, User> userMap = new HashMap<>();
+            Map<String, User> userMap = new HashMap();
             userMap.put("user", new User(username, age));
             return userMap;
         }

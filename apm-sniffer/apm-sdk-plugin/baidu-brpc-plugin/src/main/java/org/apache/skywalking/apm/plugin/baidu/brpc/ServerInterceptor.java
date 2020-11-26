@@ -41,7 +41,7 @@ public class ServerInterceptor implements InstanceMethodsAroundInterceptor {
         ContextCarrier contextCarrier = new ContextCarrier();
         CarrierItem next = contextCarrier.items();
         if (request.getKvAttachment() == null) {
-            request.setKvAttachment(new HashMap<>());
+            request.setKvAttachment(new HashMap());
         }
         while (next.hasNext()) {
             next = next.next();

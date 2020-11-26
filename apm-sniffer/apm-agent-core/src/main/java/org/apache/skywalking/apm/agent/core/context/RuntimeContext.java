@@ -32,7 +32,7 @@ import org.apache.skywalking.apm.agent.core.conf.RuntimeContextConfiguration;
  */
 public class RuntimeContext {
     private final ThreadLocal<RuntimeContext> contextThreadLocal;
-    private Map<Object, Object> context = new ConcurrentHashMap<>(0);
+    private Map<Object, Object> context = new ConcurrentHashMap(0);
 
     public RuntimeContext(ThreadLocal<RuntimeContext> contextThreadLocal) {
         this.contextThreadLocal = contextThreadLocal;
@@ -60,7 +60,7 @@ public class RuntimeContext {
     }
 
     public RuntimeContextSnapshot capture() {
-        Map<Object, Object> runtimeContextMap = new HashMap<>();
+        Map<Object, Object> runtimeContextMap = new HashMap();
         for (String key : RuntimeContextConfiguration.NEED_PROPAGATE_CONTEXT_KEY) {
             Object value = this.get(key);
             if (value != null) {

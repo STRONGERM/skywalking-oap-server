@@ -46,7 +46,7 @@ public class MeterIdTest {
         Assert.assertEquals(labels, cacheLabels);
 
         // Check empty tags
-        meterId = new MeterId("test", MeterType.COUNTER, Collections.emptyList());
+        meterId = new MeterId("test", MeterType.COUNTER, Collections.EMPTY_LIST);
         labels = meterId.transformTags();
         Assert.assertEquals(0, labels.size());
     }

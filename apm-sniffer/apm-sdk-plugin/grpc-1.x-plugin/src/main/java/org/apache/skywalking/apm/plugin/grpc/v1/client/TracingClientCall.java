@@ -94,7 +94,7 @@ class TracingClientCall<REQUEST, RESPONSE> extends ForwardingClientCall.SimpleFo
             delegate().start(new TracingClientCallListener(responseListener, snapshot), headers);
         } catch (Throwable t) {
             ContextManager.activeSpan().errorOccurred().log(t);
-            throw t;
+            throw (RuntimeException) new Throwable(t);
         } finally {
             if (blockingSpan == null) {
                 ContextManager.stopSpan();
@@ -118,7 +118,7 @@ class TracingClientCall<REQUEST, RESPONSE> extends ForwardingClientCall.SimpleFo
             super.sendMessage(message);
         } catch (Throwable t) {
             ContextManager.activeSpan().errorOccurred().log(t);
-            throw t;
+            throw (RuntimeException) new Throwable(t);
         } finally {
             ContextManager.stopSpan();
         }
@@ -135,7 +135,7 @@ class TracingClientCall<REQUEST, RESPONSE> extends ForwardingClientCall.SimpleFo
             super.halfClose();
         } catch (Throwable t) {
             ContextManager.activeSpan().errorOccurred().log(t);
-            throw t;
+            throw (RuntimeException) new Throwable(t);
         } finally {
             ContextManager.stopSpan();
         }
@@ -156,7 +156,7 @@ class TracingClientCall<REQUEST, RESPONSE> extends ForwardingClientCall.SimpleFo
             super.cancel(message, cause);
         } catch (Throwable t) {
             ContextManager.activeSpan().errorOccurred().log(t);
-            throw t;
+            throw (RuntimeException) new Throwable(t);
         } finally {
             ContextManager.stopSpan();
         }

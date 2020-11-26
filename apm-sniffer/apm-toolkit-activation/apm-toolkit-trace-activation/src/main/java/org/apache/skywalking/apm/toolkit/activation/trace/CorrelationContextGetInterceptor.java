@@ -18,11 +18,11 @@
 package org.apache.skywalking.apm.toolkit.activation.trace;
 
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
+import org.apache.skywalking.apm.agent.core.context.jdk8.Optional;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.StaticMethodsAroundInterceptor;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 
 public class CorrelationContextGetInterceptor implements StaticMethodsAroundInterceptor {
 

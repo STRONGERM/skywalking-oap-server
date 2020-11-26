@@ -58,7 +58,7 @@ public class TracingServerCall<REQUEST, RESPONSE> extends ForwardingServerCall.S
                 super.sendMessage(message);
             } catch (Throwable t) {
                 ContextManager.activeSpan().errorOccurred().log(t);
-                throw t;
+                throw (RuntimeException) new Throwable(t);
             } finally {
                 ContextManager.stopSpan();
             }
@@ -103,7 +103,7 @@ public class TracingServerCall<REQUEST, RESPONSE> extends ForwardingServerCall.S
             super.close(status, trailers);
         } catch (Throwable t) {
             ContextManager.activeSpan().errorOccurred().log(t);
-            throw t;
+            throw (RuntimeException) new Throwable(t);
         } finally {
             ContextManager.stopSpan();
         }

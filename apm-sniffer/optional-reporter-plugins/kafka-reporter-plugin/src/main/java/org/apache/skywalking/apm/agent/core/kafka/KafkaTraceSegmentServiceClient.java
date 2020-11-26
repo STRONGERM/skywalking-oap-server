@@ -73,7 +73,7 @@ public class KafkaTraceSegmentServiceClient implements BootService, TracingConte
             return;
         }
         SegmentObject upstreamSegment = traceSegment.transform();
-        ProducerRecord<String, Bytes> record = new ProducerRecord<>(
+        ProducerRecord<String, Bytes> record = new ProducerRecord(
             topic,
             upstreamSegment.getTraceSegmentId(),
             Bytes.wrap(upstreamSegment.toByteArray())

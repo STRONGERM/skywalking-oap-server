@@ -57,7 +57,7 @@ public class OSUtil {
 
     public static List<String> getAllIPV4() {
         if (IPV4_LIST == null) {
-            IPV4_LIST = new LinkedList<>();
+            IPV4_LIST = new LinkedList();
             try {
                 Enumeration<NetworkInterface> interfs = NetworkInterface.getNetworkInterfaces();
                 while (interfs.hasMoreElements()) {
@@ -104,7 +104,7 @@ public class OSUtil {
     }
 
     public static List<KeyStringValuePair> buildOSInfo(int ipv4Size) {
-        List<KeyStringValuePair> osInfo = new ArrayList<>();
+        List<KeyStringValuePair> osInfo = new ArrayList();
 
         String osName = getOsName();
         if (osName != null) {

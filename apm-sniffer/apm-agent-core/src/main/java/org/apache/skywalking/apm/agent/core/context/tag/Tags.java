@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  */
 public final class Tags {
-    private static final Map<String, StringTag> TAG_PROTOTYPES = new ConcurrentHashMap<>();
+    private static final Map<String, StringTag> TAG_PROTOTYPES = new ConcurrentHashMap();
 
     private Tags() {
     }
@@ -93,6 +93,12 @@ public final class Tags {
      * @return the {@code StringTag}
      */
     public static AbstractTag<String> ofKey(final String key) {
-        return TAG_PROTOTYPES.computeIfAbsent(key, StringTag::new);
+/*        return TAG_PROTOTYPES.computeIfAbsent(key, new Function<String, StringTag>() {
+            @Override
+            public StringTag apply(String s) {
+                return new StringTag(s);
+            }
+        });*/
+        return null;
     }
 }

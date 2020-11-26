@@ -18,7 +18,6 @@
 
 package org.apache.skywalking.apm.agent.core.kafka;
 
-import java.util.Map;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
@@ -31,7 +30,11 @@ import org.apache.skywalking.apm.agent.core.meter.MeterId;
 import org.apache.skywalking.apm.agent.core.meter.MeterSender;
 import org.apache.skywalking.apm.agent.core.meter.MeterService;
 import org.apache.skywalking.apm.agent.core.meter.transform.MeterTransformer;
+import org.apache.skywalking.apm.agent.core.util.jdk8.Consumer;
+import org.apache.skywalking.apm.network.language.agent.v3.MeterData;
 import org.apache.skywalking.apm.network.language.agent.v3.MeterDataCollection;
+
+import java.util.Map;
 
 /**
  * A report to send JVM Metrics data to Kafka Broker.
@@ -54,15 +57,18 @@ public class KafkaMeterSender extends MeterSender {
     }
 
     public void send(Map<MeterId, MeterTransformer> meterMap, MeterService meterService) {
-        MeterDataCollection.Builder builder = MeterDataCollection.newBuilder();
-        transform(meterMap, meterData -> {
-            if (logger.isDebugEnable()) {
-                logger.debug("Meter data reporting, instance: {}", meterData.getServiceInstance());
+        final MeterDataCollection.Builder builder = MeterDataCollection.newBuilder();
+        transform(meterMap, new Consumer<MeterData>() {
+            @Override
+            public void accept(MeterData meterData) {
+                if (logger.isDebugEnable()) {
+                    logger.debug("Meter data reporting, instance: {}", meterData.getServiceInstance());
+                }
+                builder.addMeterData(meterData);
             }
-            builder.addMeterData(meterData);
         });
         producer.send(
-            new ProducerRecord<>(topic, Config.Agent.INSTANCE_NAME, Bytes.wrap(builder.build().toByteArray())));
+            new ProducerRecord(topic, Config.Agent.INSTANCE_NAME, Bytes.wrap(builder.build().toByteArray())));
 
         producer.flush();
     }

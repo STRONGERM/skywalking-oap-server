@@ -63,7 +63,9 @@ public class AgentPackagePath {
                 File agentJarFile = null;
                 try {
                     agentJarFile = new File(new URL(urlString).toURI());
-                } catch (MalformedURLException | URISyntaxException e) {
+                } catch (MalformedURLException e) {
+                    logger.error(e, "Can not locate agent jar file by url:" + urlString);
+                } catch (URISyntaxException e) {
                     logger.error(e, "Can not locate agent jar file by url:" + urlString);
                 }
                 if (agentJarFile.exists()) {

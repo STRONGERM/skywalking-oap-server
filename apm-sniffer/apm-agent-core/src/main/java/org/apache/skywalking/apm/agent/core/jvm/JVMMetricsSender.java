@@ -50,7 +50,7 @@ public class JVMMetricsSender implements BootService, Runnable, GRPCChannelListe
 
     @Override
     public void prepare() {
-        queue = new LinkedBlockingQueue<>(Config.Jvm.BUFFER_SIZE);
+        queue = new LinkedBlockingQueue(Config.Jvm.BUFFER_SIZE);
         ServiceManager.INSTANCE.findService(GRPCChannelManager.class).addChannelListener(this);
     }
 
@@ -72,7 +72,7 @@ public class JVMMetricsSender implements BootService, Runnable, GRPCChannelListe
         if (status == GRPCChannelStatus.CONNECTED) {
             try {
                 JVMMetricCollection.Builder builder = JVMMetricCollection.newBuilder();
-                LinkedList<JVMMetric> buffer = new LinkedList<>();
+                LinkedList<JVMMetric> buffer = new LinkedList();
                 queue.drainTo(buffer);
                 if (buffer.size() > 0) {
                     builder.addAllMetrics(buffer);

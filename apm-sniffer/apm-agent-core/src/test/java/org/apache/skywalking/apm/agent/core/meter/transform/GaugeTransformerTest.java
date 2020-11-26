@@ -30,7 +30,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class GaugeTransformerTest {
 
@@ -40,15 +39,15 @@ public class GaugeTransformerTest {
         final List<Label> labels = Arrays.asList(Label.newBuilder().setName("k1").setValue("v1").build());
 
         // Normal
-        GaugeTransformer transformer1 = new GaugeTransformer(new TestGaugeAdapter(meterId, () -> 2d));
+        GaugeTransformer transformer1 = new GaugeTransformer(new TestGaugeAdapter(meterId, 2d));
         validateMeterData("test", labels, 2d, transformer1.transform());
 
         // Exception
-        GaugeTransformer transformer2 = new GaugeTransformer(new TestGaugeAdapter(meterId, () -> Double.valueOf(2 / 0)));
+        GaugeTransformer transformer2 = new GaugeTransformer(new TestGaugeAdapter(meterId, Double.valueOf(2 / 0)));
         Assert.assertNull(transformer2.transform());
 
         // Null
-        GaugeTransformer transformer3 = new GaugeTransformer(new TestGaugeAdapter(meterId, () -> null));
+        GaugeTransformer transformer3 = new GaugeTransformer(new TestGaugeAdapter(meterId, null));
         Assert.assertNull(transformer3.transform());
     }
 
@@ -70,16 +69,16 @@ public class GaugeTransformerTest {
      */
     private static class TestGaugeAdapter implements GaugeAdapter {
         private final MeterId meterId;
-        private Supplier<Double> supplier;
+        private Double value;
 
-        public TestGaugeAdapter(MeterId meterId, Supplier<Double> supplier) {
+        public TestGaugeAdapter(MeterId meterId, Double value) {
             this.meterId = meterId;
-            this.supplier = supplier;
+            this.value = value;
         }
 
         @Override
         public Double getCount() {
-            return supplier.get();
+            return value;
         }
 
         @Override

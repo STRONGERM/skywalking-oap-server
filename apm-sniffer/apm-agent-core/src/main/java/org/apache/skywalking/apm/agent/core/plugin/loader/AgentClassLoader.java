@@ -21,6 +21,7 @@ package org.apache.skywalking.apm.agent.core.plugin.loader;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -84,7 +85,7 @@ public class AgentClassLoader extends ClassLoader {
     public AgentClassLoader(ClassLoader parent) throws AgentPackageNotFoundException {
         super(parent);
         File agentDictionary = AgentPackagePath.getPath();
-        classpath = new LinkedList<>();
+        classpath = new LinkedList();
         classpath.add(new File(agentDictionary, "plugins"));
         classpath.add(new File(agentDictionary, "activations"));
     }
@@ -98,16 +99,19 @@ public class AgentClassLoader extends ClassLoader {
             if (entry == null) {
                 continue;
             }
+            byte[] data = null;
             try {
                 URL classFileUrl = new URL("jar:file:" + jar.sourceFile.getAbsolutePath() + "!/" + path);
-                byte[] data;
-                try (final BufferedInputStream is = new BufferedInputStream(
-                    classFileUrl.openStream()); final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                try {
+                    final BufferedInputStream is = new BufferedInputStream(classFileUrl.openStream());
+                    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int ch;
                     while ((ch = is.read()) != -1) {
                         baos.write(ch);
                     }
                     data = baos.toByteArray();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 return processLoadedClass(defineClass(name, data, 0, data.length));
             } catch (IOException e) {
@@ -134,7 +138,7 @@ public class AgentClassLoader extends ClassLoader {
 
     @Override
     protected Enumeration<URL> findResources(String name) throws IOException {
-        List<URL> allResources = new LinkedList<>();
+        List<URL> allResources = new LinkedList();
         List<Jar> allJars = getAllJars();
         for (Jar jar : allJars) {
             JarEntry entry = jar.jarFile.getJarEntry(name);
@@ -185,10 +189,15 @@ public class AgentClassLoader extends ClassLoader {
     }
 
     private LinkedList<Jar> doGetJars() {
-        LinkedList<Jar> jars = new LinkedList<>();
+        LinkedList<Jar> jars = new LinkedList();
         for (File path : classpath) {
             if (path.exists() && path.isDirectory()) {
-                String[] jarFileNames = path.list((dir, name) -> name.endsWith(".jar"));
+                String[] jarFileNames = path.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.endsWith(".jar");
+                    }
+                });
                 for (String fileName : jarFileNames) {
                     try {
                         File file = new File(path, fileName);

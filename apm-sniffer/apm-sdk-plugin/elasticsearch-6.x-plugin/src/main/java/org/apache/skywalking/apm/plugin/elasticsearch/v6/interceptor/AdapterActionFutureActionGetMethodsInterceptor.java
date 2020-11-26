@@ -76,7 +76,7 @@ public class AdapterActionFutureActionGetMethodsInterceptor implements InstanceM
 
     private boolean isTrace(EnhancedInstance objInst) {
 
-        return objInst.getSkyWalkingDynamicField() != null && (boolean) objInst.getSkyWalkingDynamicField();
+        return objInst.getSkyWalkingDynamicField() != null && Boolean.parseBoolean(String.valueOf(objInst.getSkyWalkingDynamicField()));
 
     }
 

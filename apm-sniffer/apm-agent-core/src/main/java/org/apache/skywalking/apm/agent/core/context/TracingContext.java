@@ -78,7 +78,7 @@ public class TracingContext implements AbstractTracerContext {
      * storage-structure. <p> I use {@link LinkedList#removeLast()}, {@link LinkedList#addLast(Object)} and {@link
      * LinkedList#getLast()} instead of {@link #pop()}, {@link #push(AbstractSpan)}, {@link #peek()}
      */
-    private LinkedList<AbstractSpan> activeSpanStack = new LinkedList<>();
+    private LinkedList<AbstractSpan> activeSpanStack = new LinkedList();
     /**
      * @since 7.0.0 SkyWalking support lazy injection through {@link ExitTypeSpan#inject(ContextCarrier)}. Due to that,
      * the {@link #activeSpanStack} could be blank by then, this is a pointer forever to the first span, even the main
@@ -466,7 +466,7 @@ public class TracingContext implements AbstractTracerContext {
      * when the <code>TracingContext</code> finished, and {@link #segment} is ready for further process.
      */
     public static class ListenerManager {
-        private static List<TracingContextListener> LISTENERS = new LinkedList<>();
+        private static List<TracingContextListener> LISTENERS = new LinkedList();
 
         /**
          * Add the given {@link TracingContextListener} to {@link #LISTENERS} list.
@@ -503,7 +503,7 @@ public class TracingContext implements AbstractTracerContext {
      * The <code>ListenerManager</code> represents an event notify for every registered listener, which are notified
      */
     public static class TracingThreadListenerManager {
-        private static List<TracingThreadListener> LISTENERS = new LinkedList<>();
+        private static List<TracingThreadListener> LISTENERS = new LinkedList();
 
         public static synchronized void add(TracingThreadListener listener) {
             LISTENERS.add(listener);

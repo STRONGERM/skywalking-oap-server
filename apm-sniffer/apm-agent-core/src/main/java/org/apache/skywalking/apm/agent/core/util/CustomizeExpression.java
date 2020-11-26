@@ -37,7 +37,7 @@ public class CustomizeExpression {
     private static final ILog logger = LogManager.getLogger(CustomizeExpression.class);
 
     public static Map<String, Object> evaluationContext(Object[] allArguments) {
-        Map<String, Object> context = new HashMap<>();
+        Map<String, Object> context = new HashMap();
         if (allArguments == null) {
             return context;
         }
@@ -48,7 +48,7 @@ public class CustomizeExpression {
     }
 
     public static Map<String, Object> evaluationReturnContext(Object ret)  {
-        Map<String, Object> context = new HashMap<>();
+        Map<String, Object> context = new HashMap();
         context.put("returnedObj", ret.toString());
         if (ret instanceof List) {
             List retList = (List) ret;

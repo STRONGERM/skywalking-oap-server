@@ -44,7 +44,12 @@ public class GaugeInterceptorTest {
 
     private GaugeInterceptor gaugeInterceptor = new GaugeInterceptor();
     private EnhancedInstance enhancedInstance = new GaugeEnhance(
-        new MeterId("test", MeterId.MeterType.GAUGE, Arrays.asList(new MeterId.Tag("k1", "v1"))), () -> 1d);
+            new MeterId("test", MeterId.MeterType.GAUGE, Arrays.asList(new MeterId.Tag("k1", "v1"))), new Supplier<Double>() {
+        @Override
+        public Double get() {
+            return 1d;
+        }
+    });
 
     @Test
     public void testConstruct() {

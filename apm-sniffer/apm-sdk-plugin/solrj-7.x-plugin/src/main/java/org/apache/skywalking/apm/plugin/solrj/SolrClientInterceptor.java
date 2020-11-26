@@ -99,7 +99,7 @@ public class SolrClientInterceptor implements InstanceMethodsAroundInterceptor, 
                             deleteBy = ur.getDeleteQuery();
                         }
                         if (deleteBy == null) {
-                            deleteBy = new ArrayList<>();
+                            deleteBy = new ArrayList();
                         }
                         String operator = getOperatorNameWithAction(collection, request.getPath(), actionName);
                         span = getSpan(operator, instance.getRemotePeer());

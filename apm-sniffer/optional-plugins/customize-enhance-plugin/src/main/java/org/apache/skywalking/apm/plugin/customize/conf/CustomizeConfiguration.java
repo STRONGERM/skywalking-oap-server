@@ -63,8 +63,8 @@ public enum CustomizeConfiguration {
      * Some information after custom enhancements, this configuration is used by the custom enhancement plugin.
      * And using Map CONTEXT for avoiding classloader isolation issue.
      */
-    private static final Map<String, Map<String, Object>> CONTEXT_METHOD_CONFIGURATIONS = new HashMap<>();
-    private static final Map<String, ElementMatcher> CONTEXT_ENHANCE_CLASSES = new HashMap<>();
+    private static final Map<String, Map<String, Object>> CONTEXT_METHOD_CONFIGURATIONS = new HashMap();
+    private static final Map<String, ElementMatcher> CONTEXT_ENHANCE_CLASSES = new HashMap();
     private static final AtomicBoolean LOAD_FOR_CONFIGURATION = new AtomicBoolean(false);
 
     /**

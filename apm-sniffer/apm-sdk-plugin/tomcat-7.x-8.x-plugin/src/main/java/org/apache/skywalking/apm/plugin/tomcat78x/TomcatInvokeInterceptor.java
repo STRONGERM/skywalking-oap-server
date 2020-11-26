@@ -115,7 +115,7 @@ public class TomcatInvokeInterceptor implements InstanceMethodsAroundInterceptor
     }
 
     private void collectHttpParam(Request request, AbstractSpan span) {
-        final Map<String, String[]> parameterMap = new HashMap<>();
+        final Map<String, String[]> parameterMap = new HashMap();
         final org.apache.coyote.Request coyoteRequest = request.getCoyoteRequest();
         final Parameters parameters = coyoteRequest.getParameters();
         for (final Enumeration<String> names = parameters.getParameterNames(); names.hasMoreElements(); ) {

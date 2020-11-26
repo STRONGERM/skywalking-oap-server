@@ -96,7 +96,7 @@ public class Config {
         /**
          * service instance properties e.g. agent.instance_properties[org]=apache
          */
-        public static Map<String, String> INSTANCE_PROPERTIES = new HashMap<>();
+        public static Map<String, String> INSTANCE_PROPERTIES = new HashMap();
 
         /**
          * How depth the agent goes, when log cause exceptions.

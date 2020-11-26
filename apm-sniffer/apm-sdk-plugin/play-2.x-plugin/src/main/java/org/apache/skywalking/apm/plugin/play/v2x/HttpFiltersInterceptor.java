@@ -46,7 +46,7 @@ public class HttpFiltersInterceptor implements InstanceMethodsAroundInterceptor,
         Injector injector = (Injector) object;
         TracingFilter filter = injector.instanceOf(TracingFilter.class);
         Seq seq = (Seq) ret;
-        List<Object> filters = new ArrayList<>(seq.size() + 1);
+        List<Object> filters = new ArrayList(seq.size() + 1);
         filters.add(filter);
         filters.addAll(scala.collection.JavaConverters.asJavaCollection(seq));
         return scala.collection.JavaConverters.asScalaBuffer(filters).toList();

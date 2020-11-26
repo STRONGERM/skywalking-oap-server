@@ -20,7 +20,6 @@ package org.apache.skywalking.apm.agent.core.util;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Some utility methods for collections. Reinvent the wheels because importing third-party libs just for some methods is
@@ -30,9 +29,11 @@ import java.util.stream.Collectors;
  */
 public final class CollectionUtil {
     public static String toString(final Map<String, String[]> map) {
-        return map.entrySet()
-                  .stream()
-                  .map(entry -> entry.getKey() + "=" + Arrays.toString(entry.getValue()))
-                  .collect(Collectors.joining("\n"));
+
+        String result = new String();
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+            result = result + entry.getKey() + "=" + Arrays.toString(entry.getValue()) + "\n";
+        }
+        return result.substring(0, result.length() - 1);
     }
 }

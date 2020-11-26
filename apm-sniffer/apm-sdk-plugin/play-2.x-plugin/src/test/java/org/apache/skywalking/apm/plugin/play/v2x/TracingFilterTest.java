@@ -54,6 +54,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.apache.skywalking.apm.agent.test.tools.SpanAssert.assertComponent;
 import static org.hamcrest.CoreMatchers.is;
@@ -172,7 +173,7 @@ public class TracingFilterTest {
 
         @Override
         public Http.Headers getHeaders() {
-            return new Http.Headers(new HashMap<>());
+            return new Http.Headers(new HashMap());
         }
 
         @Override
@@ -204,7 +205,17 @@ public class TracingFilterTest {
     @Test
     public void testStatusCodeIsOk() throws Exception {
         TracingFilter filter = new TracingFilter(materializer);
-        Function<Http.RequestHeader, CompletionStage<Result>> next = requestHeader -> CompletableFuture.supplyAsync(() -> ok("Hello"));
+        Function<Http.RequestHeader, CompletionStage<Result>> next = new Function<Http.RequestHeader, CompletionStage<Result>>() {
+            @Override
+            public CompletionStage<Result> apply(Http.RequestHeader requestHeader) {
+                return CompletableFuture.supplyAsync(new Supplier<Result>() {
+                    @Override
+                    public Result get() {
+                        return ok("Hello");
+                    }
+                });
+            }
+        };
         CompletionStage<Result> result = filter.apply(next, request);
         result.toCompletableFuture().get();
         assertThat(segmentStorage.getTraceSegments().size(), is(1));
@@ -216,7 +227,17 @@ public class TracingFilterTest {
     @Test
     public void testStatusCodeIsNotOk() throws Exception {
         TracingFilter filter = new TracingFilter(materializer);
-        Function<Http.RequestHeader, CompletionStage<Result>> next = requestHeader -> CompletableFuture.supplyAsync(() -> badRequest("Hello"));
+        Function<Http.RequestHeader, CompletionStage<Result>> next = new Function<Http.RequestHeader, CompletionStage<Result>>() {
+            @Override
+            public CompletionStage<Result> apply(Http.RequestHeader requestHeader) {
+                return CompletableFuture.supplyAsync(new Supplier<Result>() {
+                    @Override
+                    public Result get() {
+                        return badRequest("Hello");
+                    }
+                });
+            }
+        };
         CompletionStage<Result> result = filter.apply(next, request);
         result.toCompletableFuture().get();
         assertThat(segmentStorage.getTraceSegments().size(), is(1));

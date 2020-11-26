@@ -41,11 +41,11 @@ class VertxContext {
     }
 
     public static final String STOP_SPAN_NECESSARY = "VERTX_STOP_SPAN_NECESSARY";
-    private static final Map<String, Stack<VertxContext>> CONTEXT_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, Stack<VertxContext>> CONTEXT_MAP = new ConcurrentHashMap();
 
     static void pushContext(String identifier, VertxContext vertxContext) {
         if (!CONTEXT_MAP.containsKey(identifier)) {
-            CONTEXT_MAP.put(identifier, new Stack<>());
+            CONTEXT_MAP.put(identifier, new Stack());
         }
         CONTEXT_MAP.get(identifier).push(vertxContext);
     }

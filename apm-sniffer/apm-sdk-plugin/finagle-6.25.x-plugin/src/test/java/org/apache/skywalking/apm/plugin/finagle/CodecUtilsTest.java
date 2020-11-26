@@ -66,7 +66,7 @@ public class CodecUtilsTest {
 
     private void assertSwContextCarrier(SWContextCarrier expected, SWContextCarrier actual) {
         assertThat(expected.getOperationName(), is(actual.getOperationName()));
-        Map<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         if (actual.getCarrier() == null) {
             assertNull(expected.getCarrier());
         } else {

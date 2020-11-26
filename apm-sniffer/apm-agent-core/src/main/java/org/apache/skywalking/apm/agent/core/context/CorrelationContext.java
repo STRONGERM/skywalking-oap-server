@@ -19,13 +19,13 @@ package org.apache.skywalking.apm.agent.core.context;
 
 import org.apache.skywalking.apm.agent.core.base64.Base64;
 import org.apache.skywalking.apm.agent.core.conf.Config;
+import org.apache.skywalking.apm.agent.core.context.jdk8.Optional;
 import org.apache.skywalking.apm.util.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 /**
  * Correlation context, use to propagation user custom data.
@@ -36,7 +36,7 @@ public class CorrelationContext {
     private final Map<String, String> data;
 
     public CorrelationContext() {
-        this.data = new HashMap<>(Config.Correlation.ELEMENT_MAX_NUMBER);
+        this.data = new HashMap(Config.Correlation.ELEMENT_MAX_NUMBER);
     }
 
     public Optional<String> put(String key, String value) {
@@ -88,10 +88,13 @@ public class CorrelationContext {
         if (data.isEmpty()) {
             return "";
         }
+        String dataString = new String();
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            dataString = dataString + Base64.encode(entry.getKey()) + ":" + Base64.encode(entry.getValue()) + ",";
+        }
+        dataString = dataString.substring(0, dataString.length() - 1);
 
-        return data.entrySet().stream()
-            .map(entry -> Base64.encode(entry.getKey()) + ":" + Base64.encode(entry.getValue()))
-            .collect(Collectors.joining(","));
+        return dataString;
     }
 
     /**

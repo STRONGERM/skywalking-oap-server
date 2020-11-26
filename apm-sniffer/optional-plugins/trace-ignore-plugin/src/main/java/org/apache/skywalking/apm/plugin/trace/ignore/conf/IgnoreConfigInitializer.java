@@ -47,7 +47,8 @@ public class IgnoreConfigInitializer {
      * <p>
      */
     public static void initialize() {
-        try (final InputStream configFileStream = loadConfigFromAgentFolder()) {
+        try {
+            final InputStream configFileStream = loadConfigFromAgentFolder();
             Properties properties = new Properties();
             properties.load(configFileStream);
             for (String key : properties.stringPropertyNames()) {

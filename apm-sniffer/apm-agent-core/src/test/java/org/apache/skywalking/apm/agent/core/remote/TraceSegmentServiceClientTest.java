@@ -108,7 +108,7 @@ public class TraceSegmentServiceClientTest {
             serviceClient, "serviceStub", TraceSegmentReportServiceGrpc.newStub(grpcServerRule.getChannel()));
         Whitebox.setInternalState(serviceClient, "status", GRPCChannelStatus.CONNECTED);
 
-        upstreamSegments = new ArrayList<>();
+        upstreamSegments = new ArrayList();
     }
 
     @Test

@@ -50,7 +50,8 @@ public class GraphqlInterceptor implements InstanceMethodsAroundInterceptor {
             AbstractSpan span = ContextManager.createLocalSpan(parameters.getField().get(0).getName());
             Tags.LOGIC_ENDPOINT.set(span, buildLogicEndpointSpan());
             span.setComponent(ComponentsDefine.GRAPHQL);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException e) {
         }
     }
 
@@ -69,7 +70,8 @@ public class GraphqlInterceptor implements InstanceMethodsAroundInterceptor {
                 return ret;
             }
             ContextManager.stopSpan();
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException e) {
         }
         return ret;
     }
@@ -89,7 +91,8 @@ public class GraphqlInterceptor implements InstanceMethodsAroundInterceptor {
                 return;
             }
             dealException(t);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException e) {
         }
     }
 

@@ -39,7 +39,7 @@ public class SubscribeMethodInterceptorTest {
     @Mock
     private SubscribeMethodInterceptor constructorInterceptor;
 
-    private List<String> mockTopics = new ArrayList<>();
+    private List<String> mockTopics = new ArrayList();
 
     private Pattern mockTopicPattern = Pattern.compile("test-.*");
 
