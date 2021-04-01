@@ -18,9 +18,10 @@
 
 package org.apache.skywalking.oap.server.analyzer.agent.kafka.module;
 
-import java.util.Properties;
 import lombok.Data;
 import org.apache.skywalking.oap.server.library.module.ModuleConfig;
+
+import java.util.Properties;
 
 @Data
 public class KafkaFetcherConfig extends ModuleConfig {
@@ -79,4 +80,9 @@ public class KafkaFetcherConfig extends ModuleConfig {
     private String topicNameOfManagements = "skywalking-managements";
 
     private String topicNameOfMeters = "skywalking-meters";
+
+    private int kafkaHandlerThreadPoolSize;
+
+    private int kafkaHandlerThreadPoolQueueSize;
+
 }

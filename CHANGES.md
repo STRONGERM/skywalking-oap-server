@@ -28,6 +28,7 @@ Release Notes.
 * Fix duplicated Spring MVC endpoint.
 * Fix lettuce plugin sometimes trace doesn‘t show span layer. 
 * Fix `@Tag` returnedObject bug.
+* Add the thread pool to the Kafka fetcher to increase the performance.
 
 #### OAP-Backend
 * Support Jetty Server advanced configurations.
